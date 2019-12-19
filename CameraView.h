@@ -22,11 +22,17 @@ public:
 	cv::Mat GetCam2();
 	void SetCam3(cv::Mat image);
 	cv::Mat GetCam3();
+	void SetCam4(cv::Mat image);
+	cv::Mat GetCam4();
+	void SetSelectedCamera(int camera);
+	int GetSelectedCamera();
 
 
 private:
 	MyCamera cam1;
 	MyCamera cam2;
 	MyCamera cam3;
+	MyCamera cam4;
+	int selectedCamera = 1;
 
 };

@@ -30,3 +30,23 @@ cv::Mat CameraView::GetCam3()
 {
 	return cam3.cameraImage;
 }
+
+void CameraView::SetCam4(cv::Mat image)
+{
+	cam4.cameraImage = image;
+}
+
+cv::Mat CameraView::GetCam4()
+{
+	return cam4.cameraImage;
+}
+
+void CameraView::SetSelectedCamera(int camera)
+{
+	selectedCamera = camera;
+}
+
+int CameraView::GetSelectedCamera()
+{
+	return selectedCamera;
+}

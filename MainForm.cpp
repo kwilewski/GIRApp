@@ -22,15 +22,21 @@ void Main()
 
 
 namespace GIRApp {
+
+	//ponizsze 4 metody obsluguja obraz
 	void MainForm::SetImage1()
 	{
 		
 		Mat image;
+		Mat imageWText;
 		int id = 0;
-		string wantedName = "Chicony USB 2.0 Camera";
+		//string wantedName = "Chicony USB 2.0 Camera";
+		//string wantedName = "e2eSoft iVCam";
+		string wantedName = "&3faa14&";
 		id = GetCameraID(cameraVector, wantedName);
 		VideoCapture video(id);
 		int fps = 30;
+		int selectedCamera;
 
 		if (!video.isOpened())
 		{
@@ -43,28 +49,28 @@ namespace GIRApp {
 				video >> image;
 				mCameraView.SetCam1(image);
 				DrawCVImage(cameraBox1, image);
-				//Thread::Sleep(1 / fps);
+				selectedCamera = mCameraView.GetSelectedCamera();
+				if (selectedCamera == 1)
+				{
+					imageWText = AddText(image);
+					DrawCVImage(bigCameraBox, imageWText);
+				}
 			}
 		}
-		/*
-		CameraView c1;
-		Mat image;
-		while (1)
-		{
-			image = c1.GetCam1();
-			DrawCVImage(cameraBox1, image);
-		}*/
 
 
 	}
 	void MainForm::SetImage2()
 	{
 		Mat image;
+		Mat imageWText;
 		int id = 3;
-		string wantedName = "e2eSoft iVCam";
+		//string wantedName = "Chicony USB 2.0 Camera";
+		string wantedName = "&272c2bc4&";
 		id = GetCameraID(cameraVector, wantedName);
 		VideoCapture video(id);
 		int fps = 30;
+		int selectedCamera;
 		if (!video.isOpened())
 		{
 			printf("cannot connect to camera ");
@@ -75,9 +81,13 @@ namespace GIRApp {
 			{
 				video >> image;
 				mCameraView.SetCam2(image);
-				AddText(image);
 				DrawCVImage(cameraBox2, image);
-				//Thread::Sleep(1 / fps);
+				selectedCamera = mCameraView.GetSelectedCamera();
+				if (selectedCamera == 2)
+				{
+					imageWText = AddText(image);
+					DrawCVImage(bigCameraBox, imageWText);
+				}
 			}
 		}
 
@@ -85,9 +95,14 @@ namespace GIRApp {
 	void MainForm::SetImage3()
 	{
 		Mat image;
+		Mat imageWText;
 		int id = 2;
+		//string wantedName = "LifeCam";
+		string wantedName = "nieusb#vid_04f2&pid_b5a7&";
+		id = GetCameraID(cameraVector, wantedName);
 		VideoCapture video(id);
 		int fps = 30;
+		int selectedCamera;
 		if (!video.isOpened())
 		{
 			printf("cannot connect to camera ");
@@ -99,27 +114,73 @@ namespace GIRApp {
 				video >> image;
 				mCameraView.SetCam3(image);
 				DrawCVImage(cameraBox3, image);
-				//Thread::Sleep(1 / fps);
+				selectedCamera = mCameraView.GetSelectedCamera();
+				if (selectedCamera == 3)
+				{
+					imageWText = AddText(image);
+					DrawCVImage(bigCameraBox, imageWText);
+				}
+			}
+		}
+
+	}
+	void MainForm::SetImage4()
+	{
+		Mat image;
+		Mat imageWText;
+		int id = 3;
+		//string wantedName = "LifeCam";
+		string wantedName = "jakaskamera";
+		id = GetCameraID(cameraVector, wantedName);
+		VideoCapture video(id);
+		int fps = 30;
+		int selectedCamera;
+		if (!video.isOpened())
+		{
+			printf("cannot connect to camera ");
+		}
+		else
+		{
+			while (1)
+			{
+				video >> image;
+				mCameraView.SetCam4(image);
+				DrawCVImage(cameraBox4, image);
+				selectedCamera = mCameraView.GetSelectedCamera();
+				if (selectedCamera == 4)
+				{
+					imageWText = AddText(image);
+					DrawCVImage(bigCameraBox, imageWText);
+				}
 			}
 		}
 
 	}
 
+	//metoda dodaje tekst do obrazu z parametru
 	cv::Mat MainForm::AddText(cv::Mat image)
 	{
 		SensorData mData = mSensorStorage.getSensorData();
-		string text = string("First sensor: ") + to_string(mData.data1) + string("\nSecond sensor: ") + to_string(mData.data2);
-		cv::putText(image, text, cv::Point(10, 50), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255),  1.5);
-		return image;
+		Mat retImage;
+		retImage = image;
+		string text1 = string("First sensor: ") + to_string(mData.data1);
+		string text2 = string("Second sensor: ") + to_string(mData.data2);
+		//img, text, startPoint, font, scale, color, thickness, lineType
+		cv::putText(retImage, text1, cv::Point(10, 50), FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(0, 0, 0), 2, 8);
+		cv::putText(retImage, text1, cv::Point(10, 50), FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(255, 255, 255), 1, 8);
+		cv::putText(retImage, text2, cv::Point(10, 100), FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(0, 0, 0), 2, 8);
+		cv::putText(retImage, text2, cv::Point(10, 100), FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(255, 255, 255), 1, 8);
+		return retImage;
 	}
 
-	void MainForm::DrawCVImage(System::Windows::Forms::Control^ control, cv::Mat& colorImage)
+	//metoda rysuje obraz z parametru image na elemencie z paramteru control
+	void MainForm::DrawCVImage(System::Windows::Forms::Control^ control, cv::Mat& image)
 	{
 		try
 		{
 			System::Drawing::Graphics^ graphics = control->CreateGraphics();
-			System::IntPtr ptr(colorImage.ptr());
-			System::Drawing::Bitmap^ b = gcnew System::Drawing::Bitmap(colorImage.cols, colorImage.rows, colorImage.step, System::Drawing::Imaging::PixelFormat::Format24bppRgb, ptr);
+			System::IntPtr ptr(image.ptr());
+			System::Drawing::Bitmap^ b = gcnew System::Drawing::Bitmap(image.cols, image.rows, image.step, System::Drawing::Imaging::PixelFormat::Format24bppRgb, ptr);
 			System::Drawing::RectangleF rect(0, 0, control->Width, control->Height);
 			graphics->DrawImage(b, rect);
 			delete graphics;
@@ -130,6 +191,7 @@ namespace GIRApp {
 		}
 	}
 
+	//metoda ustawiajaca wszystko
 	void MainForm::SetStartUp()
 	{
 		cameraVector = ListDevices();
@@ -142,7 +204,7 @@ namespace GIRApp {
 
 	
 
-
+	//metoda korzystajaca z klasy DeviceEnumerator tworzaca liste urzadzen
 	vector<CameraDevice> MainForm::ListDevices()
 	{
 
@@ -153,6 +215,7 @@ namespace GIRApp {
 		return devices;
 	}
 
+	//metoda sortujaca liste urzadzen (root na koniec)
 	vector<CameraDevice> MainForm::SortDevices(vector<CameraDevice> deviceList)
 	{
 		vector<CameraDevice> rootList;
@@ -181,6 +244,7 @@ namespace GIRApp {
 		for (auto x : retList)
 		{
 			x.id = c;
+			//ssButton->Text = ssButton->Text + c;
 			c++;
 		}
 
@@ -189,35 +253,85 @@ namespace GIRApp {
 
 
 
-
+	//metoda zwracajaca id kamery w ktorej sciezce jest serial number nazwany name
 	int MainForm::GetCameraID(vector<CameraDevice> cameraVector, string name)
 	{
 		int retID = -1;
 		System::String^ wn = gcnew System::String(name.c_str());
 		for (auto x : cameraVector)
 		{
+			/*
 			System::String^ dn = gcnew System::String(x.deviceName.c_str());
 			if (name.compare(x.deviceName) == 0)
 			{
 				retID = x.id;
 				continue;
+			}*/
+			/*
+			string path;
+			path = x.deviceName;
+			size_t found = path.find(name); 
+			if (found != string::npos)
+			{
+				retID = x.id;
+				continue;
+			}*/
+			string path;
+			path = x.devicePath;
+			size_t found = path.find(name);
+			if (found != string::npos)
+			{
+				retID = x.id;
+				continue;
 			}
+
+
 		}
 		return retID;
 	}
 
+	//metoda zapisujaca obraz na dysku
 	void MainForm::SaveImages()
 	{
-		cv::Mat img1 = mCameraView.GetCam1();
-		cv::Mat img2 = mCameraView.GetCam2();
-		cv::Mat img3 = mCameraView.GetCam3();
+		int sCam = mCameraView.GetSelectedCamera();
+		Mat img;
+		if (sCam == 1)
+		{
+			img = mCameraView.GetCam1();
+		}
+		else if (sCam == 2)
+		{
+			img = mCameraView.GetCam2();
+		}
+		else if (sCam == 3)
+		{
+			img = mCameraView.GetCam3();
+		}
+		else
+		{
+			img = mCameraView.GetCam4();
+		}
+		string currTime = GetTime();
 		string path = "C:/GIRApp/";
+		SensorData myData = mSensorStorage.getSensorData();
 		bool bDir = CreateDirectory(L"C:/GIRApp/", NULL);
-		cv::imwrite(path + "img1.jpg", img1);
-		cv::imwrite(path + "img2.jpg", img2);
-		cv::imwrite(path + "img3.jpg", img3);
+		cv::imwrite(path + "screenshot_" + currTime + ".jpg", img);
+		std::ofstream outfile(path + "plik_" + currTime + ".txt");
+		outfile << currTime << std::endl;
+		outfile << "Jakieœ coœ: " << myData.data1 << std::endl;
+		outfile.close();
 	}
 
+	string MainForm::GetTime()
+	{
+		auto t = std::time(nullptr);
+		auto tm = *std::localtime(&t);
+
+		std::ostringstream oss;
+		oss << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
+		auto str = oss.str();
+		return str;
+	}
 
 
 
@@ -254,6 +368,21 @@ namespace GIRApp {
 	void MainForm::ssButton_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		SaveImages();
+	}
+
+	System::Void MainForm::cameraBox1_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		mCameraView.SetSelectedCamera(1);
+	}
+
+	System::Void MainForm::cameraBox2_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		mCameraView.SetSelectedCamera(2);
+	}
+
+	System::Void MainForm::cameraBox3_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		mCameraView.SetSelectedCamera(3);
 	}
 
 
