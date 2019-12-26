@@ -10,7 +10,8 @@ vector<CameraDevice> cameraVector;
 CameraView mCameraView;
 SensorStorage mSensorStorage;
 
-void Main()
+
+void Main()														//uruchomienie interfejsu graficznego
 {
 
 	Application::EnableVisualStyles();
@@ -26,35 +27,38 @@ namespace GIRApp {
 	//ponizsze 4 metody obsluguja obraz
 	void MainForm::SetImage1()
 	{
-		
-		Mat image;
-		Mat imageWText;
-		int id = 0;
+		Mat image;												//Obraz z kamery
+		Mat imageWText;											//Obraz z tekstem
+		int id = -1;											//id kamery, -1 bo nie ma takiego id a cos trzeba podac do konstruktora VideoCapture
 		//string wantedName = "Chicony USB 2.0 Camera";
 		//string wantedName = "e2eSoft iVCam";
-		string wantedName = "&3faa14&";
-		id = GetCameraID(cameraVector, wantedName);
-		VideoCapture video(id);
-		int fps = 30;
-		int selectedCamera;
+		string wantedName = "&3faa14&";							//Serial number wybranej kamery
+		id = GetCameraID(cameraVector, wantedName);				//Ustawienie ID
+		VideoCapture video(id);									//inicjalizacja VideoCapture
+		int fps = 30;											//fps dla poprway wydajnosci
+		int selectedCamera;										//kamera na duzym ekranie
 
-		if (!video.isOpened())
+		if (!video.isOpened())									//jezeli nie polaczy z kamera
 		{
 			printf("cannot connect to camera ");
+			cameraBox1->Image = Image::FromFile("graphics/no_camera_icon.png");		//wyswietlanie ikony braku kamery
+			Mat noCam = imread("graphics/no_camera_icon.png");
+			mCameraView.SetCam1(noCam);
 		}
-		else
+		else													//jezeli polaczy z kamera
 		{
-			while (1)
+			while (1)											//obraz pobierany w petli
 			{
-				video >> image;
-				mCameraView.SetCam1(image);
-				DrawCVImage(cameraBox1, image);
-				selectedCamera = mCameraView.GetSelectedCamera();
-				if (selectedCamera == 1)
+				video >> image;									//aktualizacja image
+				mCameraView.SetCam1(image);						//aktualizacja obrazu w CameraView
+				DrawCVImage(cameraBox1, image);					//rysowanie obrazu w odpowiednim boxie
+				selectedCamera = mCameraView.GetSelectedCamera();	//numer kamery na duzym ekranie
+				if (selectedCamera == 1)						//jezeli ta kamera jest na duzym ekranie to wyswietl ja
 				{
 					imageWText = AddText(image);
 					DrawCVImage(bigCameraBox, imageWText);
 				}
+				Thread::Sleep(1 / fps);							//sleep dla V-sync i poprawy wydajnosci
 			}
 		}
 
@@ -64,15 +68,18 @@ namespace GIRApp {
 	{
 		Mat image;
 		Mat imageWText;
-		int id = 3;
+		int id = -1;
 		//string wantedName = "Chicony USB 2.0 Camera";
-		string wantedName = "&272c2bc4&";
+		string wantedName = "nie&272c2bc4&";
 		id = GetCameraID(cameraVector, wantedName);
 		VideoCapture video(id);
 		int fps = 30;
 		int selectedCamera;
 		if (!video.isOpened())
 		{
+			cameraBox2->Image = Image::FromFile("graphics/no_camera_icon.png");
+			Mat noCam = imread("graphics/no_camera_icon.png");
+			mCameraView.SetCam2(noCam);
 			printf("cannot connect to camera ");
 		}
 		else
@@ -88,6 +95,7 @@ namespace GIRApp {
 					imageWText = AddText(image);
 					DrawCVImage(bigCameraBox, imageWText);
 				}
+				Thread::Sleep(1 / fps);
 			}
 		}
 
@@ -96,7 +104,7 @@ namespace GIRApp {
 	{
 		Mat image;
 		Mat imageWText;
-		int id = 2;
+		int id = -1;
 		//string wantedName = "LifeCam";
 		string wantedName = "nieusb#vid_04f2&pid_b5a7&";
 		id = GetCameraID(cameraVector, wantedName);
@@ -106,6 +114,9 @@ namespace GIRApp {
 		if (!video.isOpened())
 		{
 			printf("cannot connect to camera ");
+			cameraBox3->Image = Image::FromFile("graphics/no_camera_icon.png");
+			Mat noCam = imread("graphics/no_camera_icon.png");
+			mCameraView.SetCam3(noCam);
 		}
 		else
 		{
@@ -120,6 +131,7 @@ namespace GIRApp {
 					imageWText = AddText(image);
 					DrawCVImage(bigCameraBox, imageWText);
 				}
+				Thread::Sleep(1 / fps);
 			}
 		}
 
@@ -128,9 +140,9 @@ namespace GIRApp {
 	{
 		Mat image;
 		Mat imageWText;
-		int id = 3;
+		int id = -1;
 		//string wantedName = "LifeCam";
-		string wantedName = "jakaskamera";
+		string wantedName = "&272c2bc4&";
 		id = GetCameraID(cameraVector, wantedName);
 		VideoCapture video(id);
 		int fps = 30;
@@ -138,6 +150,9 @@ namespace GIRApp {
 		if (!video.isOpened())
 		{
 			printf("cannot connect to camera ");
+			cameraBox4->Image = Image::FromFile("graphics/no_camera_icon.png");
+			Mat noCam = imread("graphics/no_camera_icon.png");
+			mCameraView.SetCam4(noCam);
 		}
 		else
 		{
@@ -152,6 +167,7 @@ namespace GIRApp {
 					imageWText = AddText(image);
 					DrawCVImage(bigCameraBox, imageWText);
 				}
+				Thread::Sleep(1 / fps);
 			}
 		}
 
@@ -199,6 +215,7 @@ namespace GIRApp {
 		th1->Start();
 		th2->Start();
 		th3->Start();
+		th4->Start();
 
 	}
 
@@ -207,11 +224,8 @@ namespace GIRApp {
 	//metoda korzystajaca z klasy DeviceEnumerator tworzaca liste urzadzen
 	vector<CameraDevice> MainForm::ListDevices()
 	{
-
 		DeviceEnumerator de;
-		// Audio Devices
 		std::vector<CameraDevice> devices = de.GetCameraDevices();
-		// Print information about the devices
 		return devices;
 	}
 
@@ -260,22 +274,6 @@ namespace GIRApp {
 		System::String^ wn = gcnew System::String(name.c_str());
 		for (auto x : cameraVector)
 		{
-			/*
-			System::String^ dn = gcnew System::String(x.deviceName.c_str());
-			if (name.compare(x.deviceName) == 0)
-			{
-				retID = x.id;
-				continue;
-			}*/
-			/*
-			string path;
-			path = x.deviceName;
-			size_t found = path.find(name); 
-			if (found != string::npos)
-			{
-				retID = x.id;
-				continue;
-			}*/
 			string path;
 			path = x.devicePath;
 			size_t found = path.find(name);
@@ -342,6 +340,7 @@ namespace GIRApp {
 		th1->Abort();
 		th2->Abort();
 		th3->Abort();
+		th4->Abort();
 		Application::Exit();
 	}
 
@@ -383,6 +382,11 @@ namespace GIRApp {
 	System::Void MainForm::cameraBox3_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		mCameraView.SetSelectedCamera(3);
+	}
+
+	System::Void MainForm::cameraBox4_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		mCameraView.SetSelectedCamera(4);
 	}
 
 

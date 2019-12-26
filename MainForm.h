@@ -95,6 +95,7 @@ namespace GIRApp {
 		System::Void cameraBox1_Click(System::Object^  sender, System::EventArgs^  e);
 		System::Void cameraBox2_Click(System::Object^  sender, System::EventArgs^  e);
 		System::Void cameraBox3_Click(System::Object^  sender, System::EventArgs^  e);
+		System::Void cameraBox4_Click(System::Object^  sender, System::EventArgs^  e);
 		string GetTime();
 
 
@@ -163,6 +164,7 @@ namespace GIRApp {
 			this->cameraBox1->Location = System::Drawing::Point(12, 12);
 			this->cameraBox1->Name = L"cameraBox1";
 			this->cameraBox1->Size = System::Drawing::Size(346, 234);
+			this->cameraBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::CenterImage;
 			this->cameraBox1->TabIndex = 0;
 			this->cameraBox1->TabStop = false;
 			this->cameraBox1->Click += gcnew System::EventHandler(this, &MainForm::cameraBox1_Click);
@@ -172,6 +174,7 @@ namespace GIRApp {
 			this->cameraBox2->Location = System::Drawing::Point(12, 255);
 			this->cameraBox2->Name = L"cameraBox2";
 			this->cameraBox2->Size = System::Drawing::Size(346, 234);
+			this->cameraBox2->SizeMode = System::Windows::Forms::PictureBoxSizeMode::CenterImage;
 			this->cameraBox2->TabIndex = 1;
 			this->cameraBox2->TabStop = false;
 			this->cameraBox2->Click += gcnew System::EventHandler(this, &MainForm::cameraBox2_Click);
@@ -191,6 +194,7 @@ namespace GIRApp {
 			this->cameraBox3->Location = System::Drawing::Point(12, 495);
 			this->cameraBox3->Name = L"cameraBox3";
 			this->cameraBox3->Size = System::Drawing::Size(346, 234);
+			this->cameraBox3->SizeMode = System::Windows::Forms::PictureBoxSizeMode::CenterImage;
 			this->cameraBox3->TabIndex = 3;
 			this->cameraBox3->TabStop = false;
 			this->cameraBox3->Click += gcnew System::EventHandler(this, &MainForm::cameraBox3_Click);
@@ -258,8 +262,10 @@ namespace GIRApp {
 			this->cameraBox4->Location = System::Drawing::Point(12, 735);
 			this->cameraBox4->Name = L"cameraBox4";
 			this->cameraBox4->Size = System::Drawing::Size(346, 234);
+			this->cameraBox4->SizeMode = System::Windows::Forms::PictureBoxSizeMode::CenterImage;
 			this->cameraBox4->TabIndex = 10;
 			this->cameraBox4->TabStop = false;
+			this->cameraBox4->Click += gcnew System::EventHandler(this, &MainForm::cameraBox4_Click);
 			// 
 			// autofocusCB
 			// 
