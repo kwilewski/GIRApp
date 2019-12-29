@@ -366,6 +366,7 @@ namespace GIRApp {
 			this->Controls->Add(this->closeButton);
 			this->Controls->Add(this->cameraBox2);
 			this->Controls->Add(this->cameraBox1);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedToolWindow;
 			this->Name = L"MainForm";
 			this->Text = L"Generator Inspection";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cameraBox1))->EndInit();
